@@ -1,0 +1,99 @@
+package com.example.ui.settings.appearance
+
+import com.example.ui.settings.core.*
+import com.example.ui.settings.components.*
+import com.example.ui.common.components.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Palette
+import androidx.compose.material.icons.rounded.PlayCircle
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.ui.common.ItemPosition
+import com.example.ui.common.theme.ThemeMode
+import com.example.ui.navigation.components.TabItem
+import com.example.ui.settings.BottomNavigationIcon
+import com.example.ui.settings.SettingsDestination
+import com.example.ui.settings.components.SettingsGroupItem
+import com.example.ui.settings.components.SettingsNavigationRow
+import com.example.ui.settings.components.SettingsSectionHeader
+import com.example.ui.settings.appearance.components.CustomDpiCard
+import androidx.compose.material.icons.rounded.FontDownload
+
+@Composable
+fun AppearanceScreen(
+    currentThemeMode: ThemeMode,
+    isDynamicColor: Boolean,
+    enabledTabs: List<TabItem>,
+    onNavigate: (SettingsDestination) -> Unit,
+    currentFontName: String? = null,
+    dpiScalePercent: Int = 100,
+    onDpiScaleChange: (Int) -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(bottom = 48.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        SettingsSectionHeader("Theme & Styling")
+
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            SettingsGroupItem(position = ItemPosition.TOP) {
+                SettingsNavigationRow(
+                    title = "App Theme",
+                    subtitle = if (isDynamicColor) "Material You Dynamic" else currentThemeMode.label,
+                    icon = Icons.Rounded.Palette,
+                    onClick = { onNavigate(SettingsDestination.AppTheme) }
+                )
+            }
+
+            SettingsGroupItem(position = ItemPosition.BOTTOM) {
+                SettingsNavigationRow(
+                    title = "Now Playing Style",
+                    subtitle = "Player theme, progress bar & track info",
+                    icon = Icons.Rounded.PlayCircle,
+                    onClick = { onNavigate(SettingsDestination.NowPlayingStyle) }
+                )
+            }
+        }
+
+        SettingsSectionHeader("Typography")
+
+        SettingsGroupItem(position = ItemPosition.SINGLE) {
+            SettingsNavigationRow(
+                title = "Custom Font",
+                subtitle = currentFontName ?: "Default",
+                icon = Icons.Rounded.FontDownload,
+                onClick = { onNavigate(SettingsDestination.CustomFont) }
+            )
+        }
+
+        SettingsSectionHeader("Display & Scaling")
+
+        CustomDpiCard(
+            dpiScalePercent = dpiScalePercent,
+            onDpiScaleChange = onDpiScaleChange
+        )
+
+        SettingsSectionHeader("Navigation & Layout")
+
+        SettingsGroupItem(position = ItemPosition.SINGLE) {
+            SettingsNavigationRow(
+                title = "Bottom Navigation Tabs",
+                subtitle = "${enabledTabs.size} active tabs",
+                icon = BottomNavigationIcon,
+                onClick = { onNavigate(SettingsDestination.BottomTabs) }
+            )
+        }
+    }
+}
